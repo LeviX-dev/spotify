@@ -31,7 +31,7 @@ const tracks = [
     album: "Single",
     duration: "1:10",
     url: "Songs/Paro.mp3",
-    albumArt: "album/Paro.jpg",
+    albumArt: "album/paro.jpg",
     isMarathi: false,
     liked: true,
   },
@@ -61,13 +61,11 @@ const tracks = [
 
 // ================= Utils =================
 
-// Convert "mm:ss" → seconds
 function durationToSeconds(str) {
   const [m, s] = str.split(":").map(Number);
   return m * 60 + s;
 }
 
-// Convert seconds → "mm:ss"
 function formatTime(seconds) {
   if (isNaN(seconds) || seconds < 0) return "0:00";
   const total = Math.floor(seconds); // 👈 fixes floating-point decimals
@@ -125,7 +123,6 @@ function loadPlaylist() {
 
   document.getElementById("user-playlists").innerHTML = playlistsHTML;
 
-  // Click listener for playlists
   document.querySelectorAll("#user-playlists .playlist-item").forEach((item) => {
     item.addEventListener("click", () => {
       const index = item.dataset.index;
@@ -144,21 +141,18 @@ function loadTrackIntoPlayer(i) {
   document.querySelector(".album-info").textContent = tracks[i].artist;
   document.querySelector(".album-image").src = tracks[i].albumArt;
 
-  // Like केलेलं गाणं असेल तर heart icon बदला
   if (tracks[i].liked) {
     document.getElementById("fav").className = "fa-solid fa-heart album-icon";
   } else {
     document.getElementById("fav").className = "fa-regular fa-heart album-icon";
   }
 
-  // Total time (after metadata loads)
   music.addEventListener("loadedmetadata", () => {
     document.querySelector(".tot-time").textContent = formatTime(
       music.duration
     );
   });
 
-  // Current time + Progress bar update
   music.addEventListener("timeupdate", () => {
     document.querySelector(".curr-time").textContent = formatTime(
       music.currentTime
@@ -229,7 +223,6 @@ function playlistRender(playlistIndex) {
 
   document.querySelector(".currentPlayListSongs").innerHTML = currentPlayListSongs;
 
-  // Recommended list
   const remainingSongs = tracks.filter((song) => !pl.songs.includes(song.id));
   const recommendedHTML = remainingSongs
     .map(
@@ -249,7 +242,6 @@ function playlistRender(playlistIndex) {
 
   document.querySelector(".recommendedSongs").innerHTML = recommendedHTML;
 
-  // Hide recommended if empty
   const recommendedSection = document.querySelector(".recommended");
   if (remainingSongs.length === 0) {
     recommendedSection.classList.add("hiden");
@@ -257,7 +249,6 @@ function playlistRender(playlistIndex) {
     recommendedSection.classList.remove("hiden");
   }
 
-  // Total duration
   document.getElementById("playlistTotal").textContent = formatTime(totalDuration);
 
   // ---- Rename Logic ----
