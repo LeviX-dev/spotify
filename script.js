@@ -115,7 +115,9 @@ function loadPlaylist() {
           <img src="${firstSong}" alt="${pl.name}">
           <div class="playlist-info">
               <h4>${pl.name}</h4>
-             <p>Playlist • <span id="likes_count">${pl.name == playlist[0].name ? likes.length: ""}</span> song</p>
+             <p>Playlist • <span id="likes_count">${
+               pl.name == playlist[0].name ? likes.length : ""
+             }</span> song</p>
           </div>
       </div>
     `;
@@ -123,13 +125,15 @@ function loadPlaylist() {
 
   document.getElementById("user-playlists").innerHTML = playlistsHTML;
 
-  document.querySelectorAll("#user-playlists .playlist-item").forEach((item) => {
-    item.addEventListener("click", () => {
-      const index = item.dataset.index;
-      playlistRender(index);
-      toggleMainContent();
+  document
+    .querySelectorAll("#user-playlists .playlist-item")
+    .forEach((item) => {
+      item.addEventListener("click", () => {
+        const index = item.dataset.index;
+        playlistRender(index);
+        toggleMainContent();
+      });
     });
-  });
 }
 
 // ================= Load Track =================
@@ -221,7 +225,8 @@ function playlistRender(playlistIndex) {
     })
     .join("");
 
-  document.querySelector(".currentPlayListSongs").innerHTML = currentPlayListSongs;
+  document.querySelector(".currentPlayListSongs").innerHTML =
+    currentPlayListSongs;
 
   const remainingSongs = tracks.filter((song) => !pl.songs.includes(song.id));
   const recommendedHTML = remainingSongs
@@ -249,7 +254,8 @@ function playlistRender(playlistIndex) {
     recommendedSection.classList.remove("hiden");
   }
 
-  document.getElementById("playlistTotal").textContent = formatTime(totalDuration);
+  document.getElementById("playlistTotal").textContent =
+    formatTime(totalDuration);
 
   // ---- Rename Logic ----
   const playlistTitle = document.getElementById("playlistTitle");
@@ -281,6 +287,14 @@ function playlistRender(playlistIndex) {
   };
 }
 
+function repeatPlay() {
+  music.currentTime = 0;
+  music.play();
+  isPlaying = true;
+  document.querySelector(".play-button").className =
+    "fa-solid fa-circle-pause player-control-icon play-button";
+}
+
 // ================= Add Song To Playlist =================
 function addToPlaylist(id, name, playlistIndex) {
   playlist.forEach((elem) => {
@@ -300,7 +314,9 @@ function toggleMainContent() {
     el.classList.toggle("hiden");
   });
 }
-document.querySelector(".close-btn").addEventListener("click", toggleMainContent);
+document
+  .querySelector(".close-btn")
+  .addEventListener("click", toggleMainContent);
 
 // ================= Init =================
 loadPlaylist();
@@ -338,3 +354,32 @@ document.querySelectorAll(".card").forEach((card) => {
       "fa-solid fa-circle-pause player-control-icon play-button";
   });
 });
+
+function muteUnmute() {
+  const volumeIcon = document.getElementById("volume-icon");
+
+  // SVG paths
+  const muteSVG = `
+    <path d="M13.86 5.47a.75.75 0 0 0-1.061 0l-1.47 1.47-1.47-1.47A.75.75 0 0 0 8.8 6.53L10.269 8l-1.47 1.47a.75.75 0 1 0 1.06 1.06l1.47-1.47 1.47 1.47a.75.75 0 0 0 1.06-1.06L12.39 8l1.47-1.47a.75.75 0 0 0 0-1.06"></path>
+    <path d="M10.116 1.5A.75.75 0 0 0 8.991.85l-6.925 4a3.64 3.64 0 0 0-1.33 4.967 3.64 3.64 0 0 0 1.33 1.332l6.925 4a.75.75 0 0 0 1.125-.649v-1.906a4.7 4.7 0 0 1-1.5-.694v1.3L2.817 9.852a2.14 2.14 0 0 1-.781-2.92c.187-.324.456-.594.78-.782l5.8-3.35v1.3c.45-.313.956-.55 1.5-.694z"></path>
+  `;
+
+  const unmuteSVG = `
+    <path d="M9.741.85a.75.75 0 0 1 .375.65v13a.75.75 0 0 1-1.125.65l-6.925-4a3.64 3.64 0 0 1-1.33-4.967 3.64 3.64 0 0 1 1.33-1.332l6.925-4a.75.75 0 0 1 .75 0zm-6.924 5.3a2.14 2.14 0 0 0 0 3.7l5.8 3.35V2.8zm8.683 4.29V5.56a2.75 2.75 0 0 1 0 4.88"></path>
+    <path d="M11.5 13.614a5.752 5.752 0 0 0 0-11.228v1.55a4.252 4.252 0 0 1 0 8.127z"></path>
+  `;
+
+  if (music.volume > 0) {
+    music.volume = 0;
+    volumeIcon.innerHTML = muteSVG;
+    document.querySelector(".volume-bar").value = 0;
+    console.log("muted");
+  } else {
+    console.log("unmuted");
+
+    music.volume = 0.5;
+    volumeIcon.innerHTML = unmuteSVG;
+    document.querySelector(".volume-bar").value = music.volume * 100;
+    console.log(music.volume);
+  }
+}
