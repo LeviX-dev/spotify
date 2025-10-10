@@ -197,6 +197,14 @@ document.getElementById("progress").addEventListener("input", (e) => {
 function playlistRender(playlistIndex) {
   const pl = playlist[playlistIndex];
   let totalDuration = 0;
+  
+if (pl && pl.songs.length > 0) {
+  const firstTrack = findSong(pl.songs[0]);
+  document.querySelector(".playlist-cover img").src =
+    firstTrack?.albumArt || "assests/music.jpg";
+} else {
+  document.querySelector(".playlist-cover img").src = "assests/music.jpg";
+}
 
   document.getElementById("playlistTitle").textContent = pl.name;
 
@@ -219,7 +227,7 @@ function playlistRender(playlistIndex) {
           <span>${song.duration}</span>
           <button class="removeBtn">
             <i class="fa-solid fa-trash"></i>
-            <span class="btn-text">Remove</span>
+            <span class="btn-text" onclick="removeFromPlaylist(${song.id} ,${playlistIndex})" >Remove</span>
           </button>
         </li>`;
     })
@@ -296,7 +304,17 @@ function repeatPlay() {
 }
 
 // ================= Add Song To Playlist =================
+function removeFromPlaylist(id, playlistIndex) {
+  playlist.forEach((elem) => {
+    if (elem.songs.includes(id)) {
+      elem.songs = elem.songs.filter((songId) => songId !== id);
+    } 
+  });
+  playlistRender(playlistIndex);
+
+}
 function addToPlaylist(id, name, playlistIndex) {
+
   playlist.forEach((elem) => {
     if (name == elem.name) elem.songs.push(id);
   });
@@ -318,9 +336,6 @@ document
   .querySelector(".close-btn")
   .addEventListener("click", toggleMainContent);
 
-// ================= Init =================
-loadPlaylist();
-loadTrackIntoPlayer(0);
 
 // ================= Generate Cards =================
 const Trending = document.getElementById("Trending");
@@ -352,6 +367,7 @@ document.querySelectorAll(".card").forEach((card) => {
     isPlaying = true;
     document.querySelector(".play-button").className =
       "fa-solid fa-circle-pause player-control-icon play-button";
+      addToRecentlyPlayed(parseInt(id));
   });
 });
 
@@ -383,3 +399,169 @@ function muteUnmute() {
     console.log(music.volume);
   }
 }
+
+
+
+
+// ================= Recently Played State =================
+let recentlyPlayed = [];
+
+function updateRecentlyPlayed() {
+  const container = document.querySelector(".cards-container");
+ 
+  const unique = [];
+  recentlyPlayed.forEach(id => {
+    if (!unique.includes(id)) unique.push(id);
+  });
+  const html = unique.slice(0, 10).map(id => {
+    const track = tracks[id];
+    if (!track) return "";
+    return `
+      <div class="card" data-id="${id}">
+        <img src="${track.albumArt}" class="card-img" alt="${track.title}" />
+        <p class="card-title">${track.title}</p>
+        <p class="card-info">Artist - ${track.artist}</p>
+      </div>
+    `;
+  }).join("");
+  container.innerHTML = html || `<div class="card">
+    <img src="./assests/card1img.jpeg" class="card-img" alt="" />
+    <p class="card-title">Top 50 - Global</p>
+    <p class="card-info">
+      Your daily updates of the most played tracks...
+    </p>
+  </div>`;
+  // Add click listeners to new cards
+  container.querySelectorAll(".card").forEach(card => {
+    card.addEventListener("click", () => {
+      let id = card.getAttribute("data-id");
+      if (id !== null) {
+        loadTrackIntoPlayer(parseInt(id));
+        music.play();
+        isPlaying = true;
+        document.querySelector(".play-button").className =
+          "fa-solid fa-circle-pause player-control-icon play-button";
+        addToRecentlyPlayed(parseInt(id));
+      }
+    });
+  });
+}
+
+// Add track to Recently Played
+function addToRecentlyPlayed(id) {
+  recentlyPlayed.unshift(id);
+  updateRecentlyPlayed();
+}
+
+function shufflePlay(){
+  const randomIndex = Math.floor(Math.random() * tracks.length);
+  loadTrackIntoPlayer(randomIndex);
+  music.play();
+  isPlaying = true;
+  document.querySelector(".play-button").className =
+    "fa-solid fa-circle-pause player-control-icon play-button";
+    addToRecentlyPlayed(randomIndex);
+}
+function playPrev() {
+  // Find the current track's position in recentlyPlayed
+  const currentId = currentTrackIndex;
+  const idx = recentlyPlayed.findIndex(id => id === currentId);
+  // Play the previous track in the recentlyPlayed list if available
+  if (idx !== -1 && idx + 1 < recentlyPlayed.length) {
+    const prevTrackId = recentlyPlayed[idx + 1];
+    loadTrackIntoPlayer(prevTrackId);
+    music.play();
+    isPlaying = true;
+    document.querySelector(".play-button").className =
+      "fa-solid fa-circle-pause player-control-icon play-button";
+    addToRecentlyPlayed(prevTrackId);
+  }
+}
+
+
+
+// ...existing code...
+
+// ================= Search Results Modal/Menu =================
+const globalSearchInput = document.getElementById("global-search");
+const searchResultsModal = document.getElementById("search-results-modal");
+const searchResultsList = document.getElementById("search-results-list");
+const closeSearchResults = document.getElementById("close-search-results");
+
+// Show modal when typing
+globalSearchInput.addEventListener("input", function () {
+  const query = this.value.trim().toLowerCase();
+  if (!query) {
+    searchResultsModal.style.display = "none";
+    searchResultsList.innerHTML = "";
+    return;
+  }
+  searchResultsModal.style.display = "flex";
+
+  // Filter tracks by title, artist, or album
+  const filteredTracks = tracks.filter(track =>
+    track.title.toLowerCase().includes(query) ||
+    track.artist.toLowerCase().includes(query) ||
+    track.album.toLowerCase().includes(query)
+  );
+
+  // Render filtered cards
+  if (filteredTracks.length === 0) {
+    searchResultsList.innerHTML = "<p>No results found.</p>";
+    return;
+  }
+
+  searchResultsList.innerHTML = filteredTracks.map((track, index) => `
+    <div class="card" data-id="${track.id - 1}">
+      <div style="display:flex;align-items:center;">
+        <img src="${track.albumArt}" class="card-img" alt="${track.title}">
+        <div>
+          <p class="card-title">${track.title}</p>
+          <p class="card-info">Artist - ${track.artist}</p>
+        </div>
+      </div>
+    </div>
+  `).join("");
+
+  // Re-attach card click listeners
+  searchResultsList.querySelectorAll(".card").forEach((card) => {
+    card.addEventListener("click", () => {
+      let id = card.getAttribute("data-id");
+      loadTrackIntoPlayer(parseInt(id));
+      music.play();
+      isPlaying = true;
+      document.querySelector(".play-button").className =
+        "fa-solid fa-circle-pause player-control-icon play-button";
+      addToRecentlyPlayed(parseInt(id));
+      searchResultsModal.style.display = "none";
+      globalSearchInput.value = "";
+    });
+  });
+});
+
+// Close modal
+closeSearchResults.addEventListener("click", () => {
+  searchResultsModal.style.display = "none";
+  globalSearchInput.value = "";
+});
+
+// Optional: close modal on outside click
+searchResultsModal.addEventListener("click", (e) => {
+  if (e.target === searchResultsModal) {
+    searchResultsModal.style.display = "none";
+    globalSearchInput.value = "";
+  }
+});
+
+// ...existing code...
+
+
+
+
+// ================= Init =================
+loadPlaylist();
+loadTrackIntoPlayer(0);
+updateRecentlyPlayed(); // Initialize Recently Played
+
+
+
