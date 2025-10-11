@@ -11,7 +11,7 @@ searchIcon.addEventListener("click", () => {
 
 let likes = [1];
 
-// ================= Track List =================
+
 const tracks = [
   {
     id: 1,
@@ -59,7 +59,7 @@ const tracks = [
   },
 ];
 
-// ================= Utils =================
+
 
 function durationToSeconds(str) {
   const [m, s] = str.split(":").map(Number);
@@ -68,7 +68,7 @@ function durationToSeconds(str) {
 
 function formatTime(seconds) {
   if (isNaN(seconds) || seconds < 0) return "0:00";
-  const total = Math.floor(seconds); // 👈 fixes floating-point decimals
+  const total = Math.floor(seconds); 
   const mins = Math.floor(total / 60);
   const secs = total % 60;
   return `${mins}:${secs.toString().padStart(2, "0")}`;
@@ -78,7 +78,7 @@ function findSong(id) {
   return tracks.find((t) => t.id === id);
 }
 
-// ================= Playlist State =================
+
 let playlist = [
   {
     name: "Liked Songs",
@@ -97,12 +97,12 @@ function createPlaylist() {
   loadPlaylist();
 }
 
-// ================= Player State =================
+
 let currentTrackIndex = 0;
 let isPlaying = false;
 let music = new Audio(tracks[currentTrackIndex].url);
 
-// ================= Load playlists =============
+
 function loadPlaylist() {
   let playlistsHTML = "";
   playlist.forEach((pl, index) => {
@@ -136,7 +136,7 @@ function loadPlaylist() {
     });
 }
 
-// ================= Load Track =================
+
 function loadTrackIntoPlayer(i) {
   currentTrackIndex = i;
   music.src = tracks[i].url;
@@ -165,7 +165,7 @@ function loadTrackIntoPlayer(i) {
   });
 }
 
-// ================= Play / Pause =================
+
 function togglePlayPause() {
   const playBtn = document.querySelector(".play-button");
   if (isPlaying) {
@@ -180,7 +180,7 @@ function togglePlayPause() {
   isPlaying = !isPlaying;
 }
 
-// ================= Progress Bar =================
+
 function updateProgressBar() {
   const progressBar = document.getElementById("progress");
   if (music.duration > 0) {
@@ -193,7 +193,7 @@ document.getElementById("progress").addEventListener("input", (e) => {
   music.currentTime = (percent / 100) * music.duration;
 });
 
-// ================= Playlist Render =================
+
 function playlistRender(playlistIndex) {
   const pl = playlist[playlistIndex];
   let totalDuration = 0;
@@ -265,7 +265,7 @@ if (pl && pl.songs.length > 0) {
   document.getElementById("playlistTotal").textContent =
     formatTime(totalDuration);
 
-  // ---- Rename Logic ----
+  
   const playlistTitle = document.getElementById("playlistTitle");
   const renameIcon = document.querySelector(".rename-icon");
 
@@ -303,7 +303,7 @@ function repeatPlay() {
     "fa-solid fa-circle-pause player-control-icon play-button";
 }
 
-// ================= Add Song To Playlist =================
+
 function removeFromPlaylist(id, playlistIndex) {
   playlist.forEach((elem) => {
     if (elem.songs.includes(id)) {
@@ -321,12 +321,12 @@ function addToPlaylist(id, name, playlistIndex) {
   playlistRender(playlistIndex);
 }
 
-// ================= Volume Control =================
+
 document.querySelector(".volume-bar").addEventListener("change", (e) => {
   music.volume = e.target.value / 100;
 });
 
-// ================= Toggle main content =================
+
 function toggleMainContent() {
   document.querySelectorAll(".main-content").forEach((el) => {
     el.classList.toggle("hiden");
@@ -337,7 +337,7 @@ document
   .addEventListener("click", toggleMainContent);
 
 
-// ================= Generate Cards =================
+
 const Trending = document.getElementById("Trending");
 const Marathi = document.getElementById("best-of-marathi");
 
@@ -358,7 +358,7 @@ tracks.forEach((element, index) => {
   if (element.liked) likes.push(index);
 });
 
-// ================= Card Click = Load Track =================
+
 document.querySelectorAll(".card").forEach((card) => {
   card.addEventListener("click", () => {
     let id = card.getAttribute("data-id");
@@ -374,7 +374,7 @@ document.querySelectorAll(".card").forEach((card) => {
 function muteUnmute() {
   const volumeIcon = document.getElementById("volume-icon");
 
-  // SVG paths
+  
   const muteSVG = `
     <path d="M13.86 5.47a.75.75 0 0 0-1.061 0l-1.47 1.47-1.47-1.47A.75.75 0 0 0 8.8 6.53L10.269 8l-1.47 1.47a.75.75 0 1 0 1.06 1.06l1.47-1.47 1.47 1.47a.75.75 0 0 0 1.06-1.06L12.39 8l1.47-1.47a.75.75 0 0 0 0-1.06"></path>
     <path d="M10.116 1.5A.75.75 0 0 0 8.991.85l-6.925 4a3.64 3.64 0 0 0-1.33 4.967 3.64 3.64 0 0 0 1.33 1.332l6.925 4a.75.75 0 0 0 1.125-.649v-1.906a4.7 4.7 0 0 1-1.5-.694v1.3L2.817 9.852a2.14 2.14 0 0 1-.781-2.92c.187-.324.456-.594.78-.782l5.8-3.35v1.3c.45-.313.956-.55 1.5-.694z"></path>
@@ -403,7 +403,7 @@ function muteUnmute() {
 
 
 
-// ================= Recently Played State =================
+
 let recentlyPlayed = [];
 
 function updateRecentlyPlayed() {
@@ -431,7 +431,7 @@ function updateRecentlyPlayed() {
       Your daily updates of the most played tracks...
     </p>
   </div>`;
-  // Add click listeners to new cards
+  
   container.querySelectorAll(".card").forEach(card => {
     card.addEventListener("click", () => {
       let id = card.getAttribute("data-id");
@@ -447,7 +447,7 @@ function updateRecentlyPlayed() {
   });
 }
 
-// Add track to Recently Played
+
 function addToRecentlyPlayed(id) {
   recentlyPlayed.unshift(id);
   updateRecentlyPlayed();
@@ -463,10 +463,10 @@ function shufflePlay(){
     addToRecentlyPlayed(randomIndex);
 }
 function playPrev() {
-  // Find the current track's position in recentlyPlayed
+  
   const currentId = currentTrackIndex;
   const idx = recentlyPlayed.findIndex(id => id === currentId);
-  // Play the previous track in the recentlyPlayed list if available
+  
   if (idx !== -1 && idx + 1 < recentlyPlayed.length) {
     const prevTrackId = recentlyPlayed[idx + 1];
     loadTrackIntoPlayer(prevTrackId);
@@ -480,15 +480,15 @@ function playPrev() {
 
 
 
-// ...existing code...
 
-// ================= Search Results Modal/Menu =================
+
+
 const globalSearchInput = document.getElementById("global-search");
 const searchResultsModal = document.getElementById("search-results-modal");
 const searchResultsList = document.getElementById("search-results-list");
 const closeSearchResults = document.getElementById("close-search-results");
 
-// Show modal when typing
+
 globalSearchInput.addEventListener("input", function () {
   const query = this.value.trim().toLowerCase();
   if (!query) {
@@ -498,14 +498,14 @@ globalSearchInput.addEventListener("input", function () {
   }
   searchResultsModal.style.display = "flex";
 
-  // Filter tracks by title, artist, or album
+  
   const filteredTracks = tracks.filter(track =>
     track.title.toLowerCase().includes(query) ||
     track.artist.toLowerCase().includes(query) ||
     track.album.toLowerCase().includes(query)
   );
 
-  // Render filtered cards
+  
   if (filteredTracks.length === 0) {
     searchResultsList.innerHTML = "<p>No results found.</p>";
     return;
@@ -523,7 +523,7 @@ globalSearchInput.addEventListener("input", function () {
     </div>
   `).join("");
 
-  // Re-attach card click listeners
+  
   searchResultsList.querySelectorAll(".card").forEach((card) => {
     card.addEventListener("click", () => {
       let id = card.getAttribute("data-id");
@@ -539,13 +539,13 @@ globalSearchInput.addEventListener("input", function () {
   });
 });
 
-// Close modal
+
 closeSearchResults.addEventListener("click", () => {
   searchResultsModal.style.display = "none";
   globalSearchInput.value = "";
 });
 
-// Optional: close modal on outside click
+
 searchResultsModal.addEventListener("click", (e) => {
   if (e.target === searchResultsModal) {
     searchResultsModal.style.display = "none";
@@ -553,15 +553,15 @@ searchResultsModal.addEventListener("click", (e) => {
   }
 });
 
-// ...existing code...
 
 
 
 
-// ================= Init =================
+
+
 loadPlaylist();
 loadTrackIntoPlayer(0);
-updateRecentlyPlayed(); // Initialize Recently Played
+updateRecentlyPlayed(); 
 
 
 
