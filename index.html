@@ -92,15 +92,40 @@
           </div>
           <div class="search">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" placeholder="What do you want to listen to?" />
+            <input
+              type="text"
+              id="global-search"
+              placeholder="What do you want to listen to?"
+            />
+          </div>
+
+          <div
+            id="search-results-modal"
+            class="search-results-modal"
+            style="display: none"
+          >
+            <div class="search-results-content">
+              <span id="close-search-results" class="close-search-results"
+                >&times;</span
+              >
+              <h3>Search Results</h3>
+              <div id="search-results-list"></div>
+            </div>
           </div>
 
           <div class="sticky-nav-options hide">
             <button class="badge nav-item hide">Explore Premium</button>
-            <button class="badge dark-badge nav-item sticky-nav-options">
-              <i class="fa-regular fa-circle-down" style="margin-right: 5px"></i
-              ><span>Install App</span>
-            </button>
+            <a
+              href="https://play.google.com/store/apps/details?id=com.spotify.music&hl=en_IN"
+            >
+              <button class="badge dark-badge nav-item sticky-nav-options">
+                <i
+                  class="fa-regular fa-circle-down"
+                  style="margin-right: 5px"
+                ></i>
+                <span>Install App</span>
+              </button>
+            </a>
             <a href="login.html" target="_blank" rel="noopener noreferrer"
               ><i class="fa-regular fa-user nav-item nav-icon"></i
             ></a>
@@ -139,7 +164,11 @@
           </div>
           <div class="search">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" placeholder="What do you want to listen to?" />
+            <input
+              type="text"
+              id="global-search"
+              placeholder="What do you want to listen to?"
+            />
           </div>
 
           <div class="sticky-nav-options">
@@ -148,7 +177,7 @@
               <i class="fa-regular fa-circle-down" style="margin-right: 5px"></i
               >Install App
             </button>
-            <a href="login.html" target="_blank" rel="noopener noreferrer"
+            <a href="login.html"
               ><i class="fa-regular fa-user nav-item nav-icon"></i
             ></a>
           </div>
@@ -244,7 +273,7 @@
             ></i>
             <i
               class="fa-solid fa-forward-step player-control-icon"
-              onclick="playNext()"
+              onclick="shufflePlay()"
               id="next"
             ></i>
             <i
